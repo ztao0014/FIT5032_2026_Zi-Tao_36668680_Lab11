@@ -9,7 +9,8 @@ const formData = ref({
   confirmPassword: '',
   isAustralian: false,
   reason: '',
-  gender: ''
+  gender: '',
+  suburb: 'Clayton'
 })
 
 const submittedCards = ref([])
@@ -31,7 +32,8 @@ const clearForm = () => {
     confirmPassword: '',
     isAustralian: false,
     reason: '',
-    gender: ''
+    gender: '',
+    suburb: 'Clayton'
   }
   errors.value = {
     username: null,
@@ -187,6 +189,10 @@ const validateReasonFriend = () => {
               @input="() => validateReasonFriend()"
             ></textarea>
             <div v-if="reasonMessage" class="text-success mt-1">{{ reasonMessage }}</div>
+          </div>
+          <div class="mb-3">
+            <label for="suburb" class="form-label">Suburb</label>
+            <input type="text" class="form-control" id="suburb" v-bind:value="formData.suburb" />
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Submit</button>

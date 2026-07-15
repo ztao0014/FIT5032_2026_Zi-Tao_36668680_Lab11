@@ -1,0 +1,150 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{float}
+
+\geometry{margin=2.5cm}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue,
+}
+
+\begin{document}
+
+\vspace*{-3cm}
+\begin{center}
+    {\LARGE \textbf{FIT5032 - Assessed Lab 5}} \\
+    \vspace{0.3cm}
+    {\large Zi Tao} \\
+    {\large Student ID: 36668680}
+\end{center}
+
+\section*{Task 5.1: Password Confirmation and Vue DevTools}
+
+\textbf{Screenshot 1a:} Password confirmation validation -- passwords do not match error.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_1a.png}
+\end{figure}
+
+\textbf{Screenshot 1b:} Vue DevTools showing formData reactive state during testing.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_1b.png}
+\end{figure}
+
+
+\section*{Task 5.2: Vue Router, Navigation, and Security}
+
+\textbf{Screenshot 2a:} Login page with username and password fields.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2a.png}
+\end{figure}
+
+\textbf{Screenshot 2b:} Access Denied page shown to unauthenticated users.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2b.png}
+\end{figure}
+
+\textbf{Screenshot 2c:} Home page (/).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2c.png}
+\end{figure}
+
+\textbf{Screenshot 2d:} About page (/) after successful login.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2d.png}
+\end{figure}
+
+\textbf{Screenshot 2e:} VS Code showing router/index.js with navigation guard code.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{screenshot5_2e.png}
+\end{figure}
+
+\textbf{Screenshot 2f:} GitHub commit history showing project updates.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2f.png}
+\end{figure}
+
+
+\section*{Code Files (Task 5.2)}
+\subsection*{router/index.js}
+\begin{verbatim}
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import AboutView from '../views/AboutView.vue'
+import LoginView from '../views/LoginView.vue'
+import AccessDenied from '../views/AccessDenied.vue'
+import { isAuthenticated } from '../auth.js'
+
+const routes = [
+  { path: '/', name: 'Home', component: HomeView },
+  { path: '/about', name: 'About', component: AboutView,
+    meta: { requiresAuth: true } },
+  { path: '/login', name: 'Login', component: LoginView },
+  { path: '/access-denied', name: 'AccessDenied',
+    component: AccessDenied }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    next('/access-denied')
+  } else {
+    next()
+  }
+})
+
+export default router
+\end{verbatim}
+
+\subsection*{src/App.vue}
+\begin{verbatim}
+<script setup>
+import BHeader from './components/BHeader.vue'
+</script>
+
+<template>
+  <header><BHeader /></header>
+  <main class="main-box">
+    <router-view></router-view>
+  </main>
+</template>
+\end{verbatim}
+
+\subsection*{src/views/HomeView.vue}
+\begin{verbatim}
+<!-- Library Registration Form with password confirmation
+     and friend keyword detection
+     (moved from LibraryRegistrationForm.vue) -->
+\end{verbatim}
+
+
+\section*{GitHub Repository}
+Lab 5 Repository: \href{https://github.com/ztao0014/FIT5032_2026_Zi-Tao_36668680_Lab5}{https://github.com/ztao0014/FIT5032\_2026\_Zi-Tao\_36668680\_Lab5}
+
+\section*{Peer Engagement}
+I engaged with my peers through in-person discussions during the lab session. We discussed Vue Router implementation, navigation guards, and authentication patterns. I also participated in the Ed Discussion forum to help classmates with Vue DevTools setup and router configuration issues.
+
+\end{document}
