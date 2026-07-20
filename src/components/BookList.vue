@@ -5,6 +5,8 @@
     <ul>
       <li v-for="book in books" :key="book.id">
         {{ book.name }} - ISBN: {{ book.isbn }}
+        <button @click="editBook(book)" style="margin-left: 10px;">Edit</button>
+        <button @click="deleteBook(book.id)" style="margin-left: 5px; color: red;">Delete</button>
       </li>
     </ul>
   </div>
@@ -13,7 +15,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { db } from '../Firebase/init.js'
-import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore'
+import { collection, query, where, orderBy, limit, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 
 export default {
   setup() {
@@ -33,11 +35,38 @@ export default {
       }
     }
 
+    const deleteBook = async (id) => {
+      try {
+        await deleteDoc(doc(db, 'books', id))
+        console.log('Book deleted:', id)
+        fetchBooks()
+      } catch (error) {
+        console.error('Error deleting book:', error)
+      }
+    }
+
+    const editBook = async (book) => {
+      const newName = prompt('Enter new book name:', book.name)
+      const newIsbn = prompt('Enter new ISBN:', book.isbn)
+      if (newName && newIsbn) {
+        try {
+          await updateDoc(doc(db, 'books', book.id), {
+            name: newName,
+            isbn: Number(newIsbn)
+          })
+          console.log('Book updated:', book.id)
+          fetchBooks()
+        } catch (error) {
+          console.error('Error updating book:', error)
+        }
+      }
+    }
+
     onMounted(() => {
       fetchBooks()
     })
 
-    return { books }
+    return { books, deleteBook, editBook }
   }
 }
 </script>
