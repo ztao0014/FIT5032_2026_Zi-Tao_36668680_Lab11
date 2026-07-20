@@ -29,6 +29,9 @@ const handleLogout = () => {
           <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
         </li>
         <li class="nav-item">
+          <router-link to="/FireRegister" class="nav-link" active-class="active">Firebase Register</router-link>
+        </li>
+        <li class="nav-item">
           <router-link to="/FireLogin" class="nav-link" active-class="active">Firebase Login</router-link>
         </li>
       </ul>
