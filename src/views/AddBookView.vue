@@ -2,9 +2,11 @@
 import { ref } from "vue"
 import { db } from "../Firebase/init.js"
 import { collection, addDoc } from "firebase/firestore"
+import BookList from "../components/BookList.vue"
 
 const isbn = ref(null)
 const name = ref("")
+const refreshKey = ref(0)
 
 const addBook = async () => {
   try {
@@ -15,6 +17,7 @@ const addBook = async () => {
     console.log("Document written with ID: ", docRef.id)
     isbn.value = null
     name.value = ""
+    refreshKey.value++
   } catch (e) {
     console.error("Error adding document: ", e)
   }
@@ -55,6 +58,7 @@ const addBook = async () => {
         </div>
       </div>
     </div>
+    <BookList :key="refreshKey" />
   </div>
 </template>
 
