@@ -1,51 +1,38 @@
 <script setup>
-import { ref } from 'vue'
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth'
+import { ref, onMounted } from "vue"
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth"
+import { useRouter } from "vue-router"
 
+const email = ref("")
+const password = ref("")
+const currentUser = ref(null)
+const errorMessage = ref("")
+const router = useRouter()
 const auth = getAuth()
 
-const email = ref('')
-const password = ref('')
-const errorMessage = ref('')
-const currentUser = ref(null)
-const isRegistering = ref(false)
-
-// Listen for auth state changes
-onAuthStateChanged(auth, (user) => {
-  currentUser.value = user
+onMounted(() => {
+  // Listen for auth state changes
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user
+    if (user) {
+      console.log("Currently signed in user:", user.email)
+    } else {
+      console.log("No user is signed in")
+    }
+  })
 })
 
-const handleRegister = async () => {
-  errorMessage.value = ''
-  try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value)
-    email.value = ''
-    password.value = ''
-    console.log('User registered successfully:', currentUser.value?.email)
-  } catch (error) {
-    errorMessage.value = error.message
-  }
-}
-
-const handleLogin = async () => {
-  errorMessage.value = ''
-  try {
-    await signInWithEmailAndPassword(auth, email.value, password.value)
-    email.value = ''
-    password.value = ''
-    console.log('User logged in:', currentUser.value?.email)
-  } catch (error) {
-    errorMessage.value = error.message
-  }
-}
-
-const handleLogout = async () => {
-  try {
-    await signOut(auth)
-    console.log('User logged out')
-  } catch (error) {
-    errorMessage.value = error.message
-  }
+const signIn = () => {
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => {
+      console.log("Successfully signed in!")
+      console.log("Current user:", auth.currentUser?.email)
+      router.push("/FireLogin")
+    })
+    .catch((error) => {
+      console.log(error.code)
+      errorMessage.value = error.message
+    })
 }
 </script>
 
@@ -53,48 +40,43 @@ const handleLogout = async () => {
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-6 offset-md-3">
-        <h1 class="text-center mb-4">Firebase Authentication</h1>
+        <h1 class="text-center mb-4">Sign In</h1>
 
         <!-- User Info when logged in -->
         <div v-if="currentUser" class="card p-4 text-center">
           <h3>Welcome!</h3>
           <p><strong>Email:</strong> {{ currentUser.email }}</p>
           <p><strong>UID:</strong> {{ currentUser.uid }}</p>
-          <button @click="handleLogout" class="btn btn-danger mt-2">Logout</button>
         </div>
 
-        <!-- Login / Register Form when not logged in -->
+        <!-- Login Form when not logged in -->
         <div v-else class="card p-4">
-          <h3 class="text-center">{{ isRegistering ? 'Register' : 'Login' }}</h3>
-          <form @submit.prevent="isRegistering ? handleRegister() : handleLogin()">
+          <form @submit.prevent="signIn">
             <div class="mb-3">
-              <label for="fire-email" class="form-label">Email</label>
+              <label for="signin-email" class="form-label">Email</label>
               <input
                 type="email"
                 class="form-control"
-                id="fire-email"
+                id="signin-email"
+                placeholder="Email"
                 v-model="email"
                 required
               />
             </div>
             <div class="mb-3">
-              <label for="fire-password" class="form-label">Password</label>
+              <label for="signin-password" class="form-label">Password</label>
               <input
                 type="password"
                 class="form-control"
-                id="fire-password"
+                id="signin-password"
+                placeholder="Password"
                 v-model="password"
                 required
               />
             </div>
             <div v-if="errorMessage" class="text-danger mb-3">{{ errorMessage }}</div>
             <div class="text-center">
-              <button type="submit" class="btn btn-primary w-100 mb-2">
-                {{ isRegistering ? 'Register' : 'Login' }}
-              </button>
-              <a href="#" @click.prevent="isRegistering = !isRegistering" class="text-decoration-none">
-                {{ isRegistering ? 'Already have an account? Login' : "Don't have an account? Register" }}
-              </a>
+              <button type="submit" class="btn btn-primary w-100">Sign In to Firebase</button>
             </div>
           </form>
         </div>
