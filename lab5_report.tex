@@ -4,12 +4,26 @@
 \usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
 
 \geometry{margin=2.5cm}
 
 \hypersetup{
     colorlinks=true,
     urlcolor=blue,
+}
+
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    breaklines=true,
+    numbers=left,
+    numbersep=5pt,
+    frame=single,
+    tabsize=2
 }
 
 \begin{document}
@@ -22,6 +36,10 @@
     {\large Student ID: 36668680}
 \end{center}
 
+\newpage
+
+% =================== Task 5.1 ===================
+
 \section*{Task 5.1: Password Confirmation and Vue DevTools}
 
 \textbf{Screenshot 1a:} Password confirmation validation -- passwords do not match error.
@@ -31,62 +49,24 @@
     \includegraphics[width=\textwidth]{screenshot5_1a.png}
 \end{figure}
 
-\textbf{Screenshot 1b:} Vue DevTools showing formData reactive state during testing.
+\newpage
+
+\textbf{Screenshot 1b:} Vue DevTools showing formData -- Suburb field demonstrates one-way binding (v-bind:value).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{screenshot5_1b.png}
 \end{figure}
 
+\newpage
+
+% =================== Task 5.2: Code Files ===================
 
 \section*{Task 5.2: Vue Router, Navigation, and Security}
 
-\textbf{Screenshot 2a:} Login page with username and password fields.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{screenshot5_2a.png}
-\end{figure}
-
-\textbf{Screenshot 2b:} Access Denied page shown to unauthenticated users.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{screenshot5_2b.png}
-\end{figure}
-
-\textbf{Screenshot 2c:} Home page (/).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{screenshot5_2c.png}
-\end{figure}
-
-\textbf{Screenshot 2d:} About page (/) after successful login.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{screenshot5_2d.png}
-\end{figure}
-
-\textbf{Screenshot 2e:} VS Code showing router/index.js with navigation guard code.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{screenshot5_2e.png}
-\end{figure}
-
-\textbf{Screenshot 2f:} GitHub commit history showing project updates.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{screenshot5_2f.png}
-\end{figure}
-
-
-\section*{Code Files (Task 5.2)}
+% ======= Page: router/index.js =======
 \subsection*{router/index.js}
-\begin{verbatim}
+\begin{lstlisting}
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
@@ -95,12 +75,27 @@ import AccessDenied from '../views/AccessDenied.vue'
 import { isAuthenticated } from '../auth.js'
 
 const routes = [
-  { path: '/', name: 'Home', component: HomeView },
-  { path: '/about', name: 'About', component: AboutView,
-    meta: { requiresAuth: true } },
-  { path: '/login', name: 'Login', component: LoginView },
-  { path: '/access-denied', name: 'AccessDenied',
-    component: AccessDenied }
+  {
+    path: '/',
+    name: 'Home',
+    component: HomeView
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: AboutView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginView
+  },
+  {
+    path: '/access-denied',
+    name: 'AccessDenied',
+    component: AccessDenied
+  }
 ]
 
 const router = createRouter({
@@ -117,29 +112,221 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-\end{verbatim}
+\end{lstlisting}
 
+\newpage
+
+% ======= Page: src/App.vue =======
 \subsection*{src/App.vue}
-\begin{verbatim}
+\begin{lstlisting}
 <script setup>
 import BHeader from './components/BHeader.vue'
 </script>
 
 <template>
-  <header><BHeader /></header>
+  <header>
+    <BHeader />
+  </header>
+
   <main class="main-box">
     <router-view></router-view>
   </main>
 </template>
-\end{verbatim}
 
+<style>
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.form {
+  text-align: center;
+  margin-top: 50px;
+}
+
+#username:focus,
+#password:focus,
+#isAustralian:focus,
+.card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.card-header {
+  background-color: #275fda;
+  color: white;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+}
+.list-group-item {
+  padding: 10px;
+}
+</style>
+\end{lstlisting}
+
+\newpage
+
+% ======= Page: src/views/HomeView.vue =======
 \subsection*{src/views/HomeView.vue}
-\begin{verbatim}
-<!-- Library Registration Form with password confirmation
-     and friend keyword detection
-     (moved from LibraryRegistrationForm.vue) -->
-\end{verbatim}
+\begin{lstlisting}
+<script setup>
+import { ref } from 'vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 
+const formData = ref({
+  username: '',
+  password: '',
+  confirmPassword: '',
+  isAustralian: false,
+  reason: '',
+  gender: '',
+  suburb: 'Clayton'
+})
+
+const submittedCards = ref([])
+
+const errors = ref({
+  username: null,
+  password: null,
+  confirmPassword: null,
+  resident: null,
+  gender: null,
+  reason: null
+})
+
+const validateName = (blur) => {
+  if (formData.value.username.length < 3) {
+    if (blur) errors.value.username = 'Name must be at least 3 characters'
+  } else {
+    errors.value.username = null
+  }
+}
+
+const validatePassword = (blur) => {
+  const password = formData.value.password
+  const minLength = 8
+  const hasUppercase = /[A-Z]/.test(password)
+  const hasLowercase = /[a-z]/.test(password)
+  const hasNumber = /\d/.test(password)
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+
+  if (password.length < minLength) {
+    if (blur)
+      errors.value.password = `Password must be at least ${minLength} characters long.`
+  } else if (!hasUppercase) {
+    if (blur)
+      errors.value.password = 'Password must contain at least one uppercase letter.'
+  } else if (!hasLowercase) {
+    if (blur)
+      errors.value.password = 'Password must contain at least one lowercase letter.'
+  } else if (!hasNumber) {
+    if (blur)
+      errors.value.password = 'Password must contain at least one number.'
+  } else if (!hasSpecialChar) {
+    if (blur)
+      errors.value.password = 'Password must contain at least one special character.'
+  } else {
+    errors.value.password = null
+  }
+}
+
+const validateConfirmPassword = (blur) => {
+  if (formData.value.password !== formData.value.confirmPassword) {
+    if (blur) errors.value.confirmPassword = 'Passwords do not match.'
+  } else {
+    errors.value.confirmPassword = null
+  }
+}
+
+const reasonMessage = ref('')
+const validateReasonFriend = () => {
+  if (formData.value.reason.toLowerCase().includes('friend')) {
+    reasonMessage.value = 'Great to have a friend'
+  } else {
+    reasonMessage.value = ''
+  }
+}
+
+const submitForm = () => {
+  validateName(true)
+  validatePassword(true)
+  validateConfirmPassword(true)
+  if (!errors.value.username && !errors.value.password
+    && !errors.value.confirmPassword) {
+    submittedCards.value.push({ ...formData.value })
+    clearForm()
+  }
+}
+
+const clearForm = () => {
+  formData.value = {
+    username: '',
+    password: '',
+    confirmPassword: '',
+    isAustralian: false,
+    reason: '',
+    gender: '',
+    suburb: 'Clayton'
+  }
+  errors.value = {
+    username: null, password: null, confirmPassword: null,
+    resident: null, gender: null, reason: null
+  }
+}
+</script>
+\end{lstlisting}
+
+\newpage
+
+% ======= Pages: Screenshots =======
+\textbf{Screenshot 5.2a:} App in Localhost -- Home page (/).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2a.png}
+\end{figure}
+
+\newpage
+
+\textbf{Screenshot 5.2b:} App in Localhost -- About page (/) after successful login.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2b.png}
+\end{figure}
+
+\newpage
+
+\textbf{Screenshot 5.2c:} Custom Routing -- Login page (/login).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2c.png}
+\end{figure}
+
+\newpage
+
+\textbf{Screenshot 5.2d:} Custom Routing -- Access Denied page (/access-denied).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2d.png}
+\end{figure}
+
+\newpage
+
+\textbf{Screenshot 5.2e:} Custom Routing -- GitHub commit history.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{screenshot5_2e.png}
+\end{figure}
+
+\newpage
 
 \section*{GitHub Repository}
 Lab 5 Repository: \href{https://github.com/ztao0014/FIT5032_2026_Zi-Tao_36668680_Lab5}{https://github.com/ztao0014/FIT5032\_2026\_Zi-Tao\_36668680\_Lab5}
