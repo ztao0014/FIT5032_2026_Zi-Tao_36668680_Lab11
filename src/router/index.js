@@ -6,7 +6,7 @@ import AccessDenied from '../views/AccessDenied.vue'
 import FirebaseSigninView from '../views/FirebaseSigninView.vue'
 import FirebaseRegisterView from '../views/FirebaseRegisterView.vue'
 import AddBookView from '../views/AddBookView.vue'
-import { isAuthenticated } from '../auth.js'
+import { getAuth } from 'firebase/auth'
 
 const routes = [
   {
@@ -43,7 +43,8 @@ const routes = [
   {
     path: '/addbook',
     name: 'AddBook',
-    component: AddBookView
+    component: AddBookView,
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -54,8 +55,13 @@ const router = createRouter({
 
 // Navigation guard: restrict access to routes that require authentication
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
-    next('/access-denied')
+  if (to.meta.requiresAuth) {
+    const auth = getAuth()
+    if (!auth.currentUser) {
+      next('/access-denied')
+    } else {
+      next()
+    }
   } else {
     next()
   }

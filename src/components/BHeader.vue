@@ -1,12 +1,22 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { isAuthenticated, logout } from '../auth.js'
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 
 const router = useRouter()
+const currentUser = ref(null)
+const auth = getAuth()
+
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user
+  })
+})
 
 const handleLogout = () => {
-  logout()
-  router.push('/login')
+  signOut(auth).then(() => {
+    router.push('/FireLogin')
+  })
 }
 </script>
 
@@ -22,20 +32,17 @@ const handleLogout = () => {
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
         </li>
-        <li class="nav-item" v-if="!isAuthenticated">
-          <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
-        </li>
-        <li class="nav-item" v-if="isAuthenticated">
-          <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
-        </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="!currentUser">
           <router-link to="/FireRegister" class="nav-link" active-class="active">Firebase Register</router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="!currentUser">
           <router-link to="/FireLogin" class="nav-link" active-class="active">Firebase Login</router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="currentUser">
           <router-link to="/addbook" class="nav-link" active-class="active">Add Book</router-link>
+        </li>
+        <li class="nav-item" v-if="currentUser">
+          <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
         </li>
       </ul>
     </header>
