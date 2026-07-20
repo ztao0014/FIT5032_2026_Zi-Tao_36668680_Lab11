@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth"
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "vue-router"
 
 const email = ref("")
@@ -47,6 +47,7 @@ const signIn = () => {
           <h3>Welcome!</h3>
           <p><strong>Email:</strong> {{ currentUser.email }}</p>
           <p><strong>UID:</strong> {{ currentUser.uid }}</p>
+          <button @click="signOut(auth); console.log('User logged out')" class="btn btn-danger mt-2">Logout</button>
         </div>
 
         <!-- Login Form when not logged in -->
