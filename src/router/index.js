@@ -6,6 +6,7 @@ import AccessDenied from '../views/AccessDenied.vue'
 import FirebaseSigninView from '../views/FirebaseSigninView.vue'
 import FirebaseRegisterView from '../views/FirebaseRegisterView.vue'
 import AddBookView from '../views/AddBookView.vue'
+import WeatherView from '../views/WeatherView.vue'
 import { getAuth } from 'firebase/auth'
 
 const routes = [
@@ -45,6 +46,11 @@ const routes = [
     name: 'AddBook',
     component: AddBookView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/WeatherCheck',
+    name: 'GetWeather',
+    component: WeatherView
   }
 ]
 

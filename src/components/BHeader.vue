@@ -38,6 +38,9 @@ const handleLogout = () => {
         <li class="nav-item" v-if="!currentUser">
           <router-link to="/FireLogin" class="nav-link" active-class="active">Firebase Login</router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/WeatherCheck" class="nav-link" active-class="active">Get Weather</router-link>
+        </li>
         <li class="nav-item" v-if="currentUser">
           <router-link to="/addbook" class="nav-link" active-class="active">Add Book</router-link>
         </li>
