@@ -27,14 +27,8 @@ const getApiData = async () => {
   error.value = null
 
   try {
-    const response = await fetch('src/assets/json/authors.json')
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    authors.value = data
+    const data = await import('../assets/json/authors.json')
+    authors.value = data.default
 
     calculateStats()
   } catch (err) {

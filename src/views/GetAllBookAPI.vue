@@ -11,13 +11,8 @@ const apiResponse = ref(null)
 
 const getApiData = async () => {
   try {
-    const response = await fetch('src/assets/json/authors.json')
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const authors = await response.json()
+    const module = await import('../assets/json/authors.json')
+    const authors = module.default
 
     const allBooks = authors.flatMap(author =>
       author.famousWorks.map(work => ({
